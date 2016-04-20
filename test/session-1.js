@@ -14,7 +14,7 @@ describe('Session 1 Functions', function() {
 
       let x = [];
       func(x);
-      assert.deepEqual(x, undefined); // <- edit me
+      assert.deepEqual(x, []); // <- edit me
 
       function swap(a, b) {
         let temp = a;
@@ -22,13 +22,14 @@ describe('Session 1 Functions', function() {
       }
       let a = 1, b = 2;
       swap(a, b);
-      assert.deepEqual(a, undefined); // <- edit me
+      assert.deepEqual(a, 1); // <- edit me
     });
   });
 
   describe('identity', () => {
     it('takes an argument and returns that argument when called', () => {
       identity = function(a) {
+          return a;
         // YOUR CODE HERE
       };
 
@@ -39,6 +40,7 @@ describe('Session 1 Functions', function() {
   describe('add', () => {
     it('adds two numbers', () => {
       add = function(a, b) {
+          return a + b;
         // YOUR CODE HERE
       };
 
@@ -49,6 +51,7 @@ describe('Session 1 Functions', function() {
   describe('mul', () => {
     it('multiplies two numbers', () => {
       mul = function(a, b) {
+          return a * b;
         // YOUR CODE HERE
       };
 
@@ -59,9 +62,12 @@ describe('Session 1 Functions', function() {
   describe('identityf', () => {
     it('takes an argument and returns a function that returns that argument', () => {
       identityf = function(x) {
+          return function() {
+              return x;
+          }
         // YOUR CODE HERE
       };
-
+      //  assert.equal({a:10, b:{c:0}}, {a:10, b:{c:10}});
       assert.strictEqual(identityf(2)(), 2);
       // This is important, make sure you understand why this works! If not, please ask!
     });
@@ -70,6 +76,9 @@ describe('Session 1 Functions', function() {
   describe('addf', () => {
     it('adds from two invocations', () => {
       addf = function(x) {
+          return function(y) {
+              return x + y;
+          }
         // YOUR CODE HERE
       };
 
@@ -80,10 +89,17 @@ describe('Session 1 Functions', function() {
   describe('applyf', () => {
     it('takes a binary function, and makes it callable with two invocation', () => {
       // a binary function takes two arguments
+        //add = function(x) { return function(y) { return x + y;}}
+        //mul = function(x) { return function(y) { return x * y;}}
       applyf = function(binary) {
+          return function(x) {
+              return function(y) {
+                  return binary (x, y);
+              }
+          }
         // YOUR CODE HERE
       };
-
+        
       assert.strictEqual(applyf(add)(3)(4), 7);
       assert.strictEqual(applyf(mul)(3)(4), 12);
     })
@@ -92,6 +108,9 @@ describe('Session 1 Functions', function() {
   describe('curry', () => {
     it('takes a function and an argument, and returns a function that can supply a second argument', () => {
       curry = function(binary, first) {
+          return function(arg2) {
+              return binary(first, arg2)
+          }
         // YOUR CODE HERE
       };
 
@@ -108,9 +127,9 @@ describe('Session 1 Functions', function() {
   describe('inc', () => {
     it('takes an argument and increments it', () => {
       // Write three ways to create the inc function *without writing any new functions*
-      const inc1 = undefined; // <- change me
-      const inc2 = undefined; // <- change me
-      const inc3 = undefined; // <- change me
+      const inc1 = curry(add, 1); // <- change me
+      const inc2 = applyf(add)(1); // <- change me
+      const inc3 = addf(1); // <- change me
 
       [inc1, inc2, inc3].forEach(inc => {
         assert.strictEqual(inc(1), 2);
@@ -122,6 +141,7 @@ describe('Session 1 Functions', function() {
   describe('methodize', () => {
     it('converts a binary function to a method', () => {
       methodize = function(binary) {
+          return function(y) {return binary(this, y)}
         // YOUR CODE HERE
       };
       // add takes two arguments, e.g. add(1, 2) returns 3A
@@ -135,6 +155,9 @@ describe('Session 1 Functions', function() {
   describe('demethodize', () => {
     it('converts a method to a binary function', () => {
       demethodize = function(method) {
+          return function(x, y) {
+              return method.call(x, y);
+          }
         // YOUR CODE HERE
       };
 
@@ -147,6 +170,9 @@ describe('Session 1 Functions', function() {
     it('takes a binary function and returns a unary function that passes its argument to the binary function twice', () => {
       // a unary function takes one argument
       twice = function(binary) {
+          return function(x) {
+              return binary(x, x);
+          }
         // YOUR CODE HERE
       };
 
@@ -161,6 +187,9 @@ describe('Session 1 Functions', function() {
   describe('composeu', () => {
     it('takes two unary functions and returns a unary function that calls them both', () => {
       composeu = function(f, g) {
+          return function(x) {
+              return g (f(x));
+          }
         // YOUR CODE HERE
       };
 
